@@ -5,12 +5,14 @@ import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 
 @Entity
-@Table(name = "restaurant_category")
-public class RestaurantCategoryEntity {
+@Table(name = "restaurant_category" , schema = "restaurantdb")
+public class RestaurantCategoryEntity implements Serializable {
 
     @Id
+    @Column(name = "ID")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 

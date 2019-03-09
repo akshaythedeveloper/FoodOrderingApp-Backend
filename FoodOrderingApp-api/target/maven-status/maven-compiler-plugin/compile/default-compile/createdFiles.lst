@@ -35,6 +35,7 @@ com/upgrad/FoodOrderingApp/api/FoodOrderingAppApiApplication.class
 com/upgrad/FoodOrderingApp/api/model/AddressListResponse.class
 com/upgrad/FoodOrderingApp/api/model/ItemQuantityResponseItem.class
 com/upgrad/FoodOrderingApp/api/model/CategoryListResponse.class
+com/upgrad/FoodOrderingApp/api/controller/CustomerController.class
 com/upgrad/FoodOrderingApp/api/model/LogoutResponse.class
 com/upgrad/FoodOrderingApp/api/model/RestaurantUpdatedResponse.class
 com/upgrad/FoodOrderingApp/api/model/SignupCustomerResponse.class
@@ -42,6 +43,7 @@ com/upgrad/FoodOrderingApp/api/model/RestaurantListResponse.class
 io/swagger/api/ApiException.class
 io/swagger/RFC3339DateFormat.class
 com/upgrad/FoodOrderingApp/api/model/DeleteAddressResponse.class
+com/upgrad/FoodOrderingApp/api/controller/AddressController.class
 com/upgrad/FoodOrderingApp/api/model/StatesListResponse.class
 com/upgrad/FoodOrderingApp/api/model/ItemQuantity.class
 com/upgrad/FoodOrderingApp/api/model/PaymentResponse.class

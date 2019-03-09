@@ -2,17 +2,17 @@ package com.upgrad.FoodOrderingApp.service.entity;
 
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-import sun.jvm.hotspot.debugger.Address;
-
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.io.Serializable;
 
 @Entity
-@Table(name = "restaurant")
-public class RestaurantEntity {
+@Table(name = "restaurant" , schema = "restaurantdb")
+public class RestaurantEntity implements Serializable{
 
     @Id
+    @Column(name = "ID")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 

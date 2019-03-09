@@ -6,12 +6,14 @@ import org.hibernate.annotations.OnDeleteAction;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.io.Serializable;
 import java.time.ZonedDateTime;
 
 @Entity
-@Table(name = "customer_auth")
-public class CustomerAuthEntity {
+@Table(name = "customer_auth" , schema = "restaurantdb")
+public class CustomerAuthEntity implements Serializable {
     @Id
+    @Column(name = "ID")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 

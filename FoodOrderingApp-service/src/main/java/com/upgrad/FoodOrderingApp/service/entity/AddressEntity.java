@@ -6,12 +6,14 @@ import org.hibernate.annotations.OnDeleteAction;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.io.Serializable;
 
 @Entity
-@Table(name = "address")
-public class AddressEntity {
+@Table(name = "address" , schema = "restaurantdb")
+public class AddressEntity implements Serializable{
 
     @Id
+    @Column(name = "ID")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
