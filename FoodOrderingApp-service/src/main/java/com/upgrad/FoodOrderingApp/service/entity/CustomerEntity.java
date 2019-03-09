@@ -1,12 +1,16 @@
 package com.upgrad.FoodOrderingApp.service.entity;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 
 @Entity
-@Table(name = "customer" , schema = "restaurantdb")
+@Table(name = "customer" , schema = "public")
+@NamedQueries({
+        @NamedQuery(name = "customerByContactNumber" , query = "select c from CustomerEntity c where c.contactNumber = :contactNumber")
+})
 public class CustomerEntity implements Serializable {
 
     @Id
@@ -29,6 +33,7 @@ public class CustomerEntity implements Serializable {
     private String lastname;
 
     @Column(name = "email")
+    @Email
     @Size(max = 50)
     private String email;
 

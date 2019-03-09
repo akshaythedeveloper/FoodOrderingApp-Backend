@@ -8,7 +8,7 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 @Entity
-@Table(name = "order_item" , schema = "restaurantdb")
+@Table(name = "order_item" , schema = "public")
 public class OrderItemEntity implements Serializable {
 
     @Id

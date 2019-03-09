@@ -10,7 +10,7 @@ import java.io.Serializable;
 import java.time.ZonedDateTime;
 
 @Entity
-@Table(name = "customer_auth" , schema = "restaurantdb")
+@Table(name = "customer_auth" , schema = "public")
 public class CustomerAuthEntity implements Serializable {
     @Id
     @Column(name = "ID")

@@ -9,7 +9,7 @@ import javax.validation.constraints.Size;
 import java.io.Serializable;
 
 @Entity
-@Table(name = "address" , schema = "restaurantdb")
+@Table(name = "address" , schema = "public")
 public class AddressEntity implements Serializable{
 
     @Id

@@ -9,7 +9,7 @@ import java.io.Serializable;
 import java.time.ZonedDateTime;
 
 @Entity
-@Table(name = "orders" , schema = "restaurantdb")
+@Table(name = "orders" , schema = "public")
 public class OrdersEntity implements Serializable {
 
     @Id
