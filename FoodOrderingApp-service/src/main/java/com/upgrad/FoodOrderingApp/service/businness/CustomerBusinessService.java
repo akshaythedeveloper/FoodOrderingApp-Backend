@@ -2,7 +2,9 @@ package com.upgrad.FoodOrderingApp.service.businness;
 
 import com.fasterxml.jackson.databind.deser.DataFormatReaders;
 import com.upgrad.FoodOrderingApp.service.dao.CustomerDao;
+import com.upgrad.FoodOrderingApp.service.entity.CustomerAuthEntity;
 import com.upgrad.FoodOrderingApp.service.entity.CustomerEntity;
+import com.upgrad.FoodOrderingApp.service.exception.AuthenticationFailedException;
 import com.upgrad.FoodOrderingApp.service.exception.SignUpRestrictedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -10,7 +12,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.ZonedDateTime;
+import java.util.UUID;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 @Service
@@ -63,4 +68,53 @@ public class CustomerBusinessService {
 
         return customerDao.createCustomer(customerEntity);
     }
+
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    public CustomerAuthEntity authenticate(String username , String password) throws AuthenticationFailedException {
+
+        String userNameValidation = "^(.+)@(.+)$";
+        Pattern pattern = Pattern.compile(userNameValidation);
+        Matcher matcher = pattern.matcher(username);
+
+        String passwordValidation = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[#@$%&*!^])(?=\\S+$).{8,}$";
+        Pattern pattern1 = Pattern.compile(passwordValidation);
+        Matcher matcher1 = pattern1.matcher(password);
+
+
+
+        if (!matcher.matches() || !matcher1.matches()) {
+            throw new AuthenticationFailedException("ATH-002" , "Incorrect format of decoded customer name and password");
+        }
+
+        CustomerEntity customerEntity = customerDao.getUserByEmail(username);
+
+        if(customerEntity == null) {
+            throw new AuthenticationFailedException("ATH-001" , "This contact number has not been registered!");
+        }
+
+        final String encryptedPassword = PasswordCryptographyProvider.encrypt(password, customerEntity.getSalt());
+
+        if (encryptedPassword.equals(customerEntity.getPassword())) {
+            JwtTokenProvider jwtTokenProvider = new JwtTokenProvider(encryptedPassword);
+            CustomerAuthEntity customerAuthEntity = new CustomerAuthEntity();
+            customerAuthEntity.setUuid(UUID.randomUUID().toString());
+            customerAuthEntity.setCustomerId(customerEntity);
+            ZonedDateTime now = ZonedDateTime.now();
+            ZonedDateTime expiresAt = now.plusHours(8);
+
+            customerAuthEntity.setLoginAt(ZonedDateTime.now());
+            customerAuthEntity.setExpiresAt(expiresAt);
+            customerAuthEntity.setAccessToken(jwtTokenProvider.generateToken(customerEntity.getUuid(), now, expiresAt));
+
+
+            return customerDao.createCustomerAuth(customerAuthEntity);
+        } else {
+            throw new AuthenticationFailedException("ATH-002", "Invalid Credentials");
+        }
+
+
+    }
+
+
 }

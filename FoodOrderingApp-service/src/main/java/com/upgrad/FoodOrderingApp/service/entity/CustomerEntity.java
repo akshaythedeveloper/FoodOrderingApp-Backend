@@ -9,7 +9,8 @@ import java.io.Serializable;
 @Entity
 @Table(name = "customer" , schema = "public")
 @NamedQueries({
-        @NamedQuery(name = "customerByContactNumber" , query = "select c from CustomerEntity c where c.contactNumber = :contactNumber")
+        @NamedQuery(name = "customerByContactNumber" , query = "select c from CustomerEntity c where c.contactNumber = :contactNumber"),
+        @NamedQuery(name = "customerByEmail" , query = "select c from CustomerEntity c where c.email = :email")
 })
 public class CustomerEntity implements Serializable {
 
