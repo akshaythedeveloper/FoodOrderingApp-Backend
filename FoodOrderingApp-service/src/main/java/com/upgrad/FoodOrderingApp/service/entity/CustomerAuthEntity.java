@@ -2,6 +2,7 @@ package com.upgrad.FoodOrderingApp.service.entity;
 
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import org.springframework.data.jpa.repository.Query;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;

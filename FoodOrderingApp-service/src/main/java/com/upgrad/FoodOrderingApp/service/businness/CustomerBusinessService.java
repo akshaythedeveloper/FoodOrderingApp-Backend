@@ -5,6 +5,7 @@ import com.upgrad.FoodOrderingApp.service.dao.CustomerDao;
 import com.upgrad.FoodOrderingApp.service.entity.CustomerAuthEntity;
 import com.upgrad.FoodOrderingApp.service.entity.CustomerEntity;
 import com.upgrad.FoodOrderingApp.service.exception.AuthenticationFailedException;
+import com.upgrad.FoodOrderingApp.service.exception.AuthorizationFailedException;
 import com.upgrad.FoodOrderingApp.service.exception.SignUpRestrictedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +13,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.UUID;
 import java.util.regex.Matcher;
@@ -71,7 +74,7 @@ public class CustomerBusinessService {
 
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public CustomerAuthEntity authenticate(String username , String password) throws AuthenticationFailedException {
+    public CustomerAuthEntity authenticate(String username, String password) throws AuthenticationFailedException {
 
         String userNameValidation = "^(.+)@(.+)$";
         Pattern pattern = Pattern.compile(userNameValidation);
@@ -82,15 +85,14 @@ public class CustomerBusinessService {
         Matcher matcher1 = pattern1.matcher(password);
 
 
-
         if (!matcher.matches() || !matcher1.matches()) {
-            throw new AuthenticationFailedException("ATH-002" , "Incorrect format of decoded customer name and password");
+            throw new AuthenticationFailedException("ATH-002", "Incorrect format of decoded customer name and password");
         }
 
         CustomerEntity customerEntity = customerDao.getUserByEmail(username);
 
-        if(customerEntity == null) {
-            throw new AuthenticationFailedException("ATH-001" , "This contact number has not been registered!");
+        if (customerEntity == null) {
+            throw new AuthenticationFailedException("ATH-001", "This contact number has not been registered!");
         }
 
         final String encryptedPassword = PasswordCryptographyProvider.encrypt(password, customerEntity.getSalt());
@@ -100,6 +102,7 @@ public class CustomerBusinessService {
             CustomerAuthEntity customerAuthEntity = new CustomerAuthEntity();
             customerAuthEntity.setUuid(UUID.randomUUID().toString());
             customerAuthEntity.setCustomerId(customerEntity);
+
             ZonedDateTime now = ZonedDateTime.now();
             ZonedDateTime expiresAt = now.plusHours(8);
 
@@ -112,6 +115,35 @@ public class CustomerBusinessService {
         } else {
             throw new AuthenticationFailedException("ATH-002", "Invalid Credentials");
         }
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    public CustomerAuthEntity logout(String authorization) throws AuthorizationFailedException {
+
+        CustomerAuthEntity customerAuthEntity = customerDao.getCustomerByAccessToken(authorization);
+
+        if (customerAuthEntity == null) {
+            throw new AuthorizationFailedException("ATHR-001", "Customer is not Logged in.");
+        }
+
+        ZonedDateTime expireTime = customerAuthEntity.getExpiresAt();
+        ZonedDateTime currentTime = ZonedDateTime.now();
+
+        if (expireTime.isBefore(currentTime)) {
+            throw new AuthorizationFailedException("ATHR-003", "Your session is expired. Log in again to access this endpoint.");
+        }
+
+
+        ZonedDateTime logoutAtTime = customerAuthEntity.getLogoutAt();
+        if (logoutAtTime != null) {
+            throw new AuthorizationFailedException("ATHR-002", "Customer is logged out. Log in again to access this endpoint.");
+
+        }
+
+        customerAuthEntity.setLogoutAt(ZonedDateTime.now());
+        customerDao.updateCustomerAuth(customerAuthEntity);
+
+        return customerAuthEntity;
 
 
     }

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import java.time.ZonedDateTime;
 
 /**
  * CustomerDao class provides the database access for all the endpoints in user controller.
@@ -49,6 +50,11 @@ public class CustomerDao {
     public CustomerAuthEntity createCustomerAuth(CustomerAuthEntity userAuthEntity) {
         entityManager.persist(userAuthEntity);
         return userAuthEntity;
+    }
+
+    public CustomerAuthEntity updateCustomerAuth(CustomerAuthEntity customerAuthEntity) {
+        entityManager.merge(customerAuthEntity);
+        return customerAuthEntity;
     }
 
 

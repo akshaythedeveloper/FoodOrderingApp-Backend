@@ -75,8 +75,13 @@ public class CustomerController {
 
     }
 
-    public ResponseEntity<LogoutResponse> logout(@RequestHeader("authorization") final String accessToken) throws AuthorizationFailedException {
+    @RequestMapping(method = RequestMethod.POST , path = "/logout" , consumes = MediaType.APPLICATION_JSON_UTF8_VALUE , produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<LogoutResponse> logout(@RequestHeader("authorization") final String authorization) throws AuthorizationFailedException {
 
+        CustomerAuthEntity customerAuthEntity = customerBusinessService.logout(authorization);
+
+        LogoutResponse logoutResponse = new LogoutResponse().id(customerAuthEntity.getCustomerId().getUuid()).message("LOGGED OUT SUCCESSFULLY");
+        return new ResponseEntity<LogoutResponse>(logoutResponse, HttpStatus.OK);
 
 
     }
